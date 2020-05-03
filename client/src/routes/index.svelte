@@ -1,12 +1,11 @@
 <script>
-  const getData = async () => {
-    if (process.browser) {
-      return await fetch('https://jsonplaceholder.typicode.com/users')
-        .then(res => res.json())
-        .then(data => data)
-        .catch(err => console.log(err))
-    }
-  }
+  const getLatestMessage = async () =>
+    process.browser
+      ? await fetch('http://localhost:8000/api/message')
+          .then(res => res.json())
+          .then(data => data)
+          .catch(err => console.log(err))
+      : false
 </script>
 
 <style scoped>
@@ -25,11 +24,13 @@
 </svelte:head>
 
 <div class="container">
-  {#await getData()}
-    <p>fetching data...</p>
-  {:then data}
-    {#each data as user, i (user.id)}
-      <p>User: {user.name}</p>
-    {/each}
+  {#await getLatestMessage()}
+    <p>Getting latest message...</p>
+  {:then {name, location, message}}
+    <p>Name: {name}</p>
+    <p>Location: {location}</p>
+    <p>Message: {message}</p>
+  {:catch error}
+    <p>Oops... something happened with our server.</p>
   {/await}
 </div>
