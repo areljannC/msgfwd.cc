@@ -1,46 +1,31 @@
-<style>
-	h1, figure, p {
-		text-align: center;
-		margin: 0 auto;
-	}
+<script>
+  const getData = async () =>
+    await fetch('https://jsonplaceholder.typicode.com/users')
+      .then(res => res.json())
+      .then(data => data)
+</script>
 
-	h1 {
-		font-size: 2.8em;
-		text-transform: uppercase;
-		font-weight: 700;
-		margin: 0 0 0.5em 0;
-	}
-
-	figure {
-		margin: 0 0 1em 0;
-	}
-
-	img {
-		width: 100%;
-		max-width: 400px;
-		margin: 0 0 1em 0;
-	}
-
-	p {
-		margin: 1em auto;
-	}
-
-	@media (min-width: 480px) {
-		h1 {
-			font-size: 4em;
-		}
-	}
+<style scoped>
+  .container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 </style>
 
 <svelte:head>
-	<title>Sapper project template</title>
+  <title>msgfwd.cc | Forward Your Message</title>
 </svelte:head>
 
-<h1>Great success!</h1>
-
-<figure>
-	<img alt='Borat' src='great-success.png'>
-	<figcaption>HIGH FIVE!</figcaption>
-</figure>
-
-<p><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>
+<div class="container">
+  {#await getData()}
+    <p>fetching data...</p>
+  {:then data}
+    {#each data as user, i (user.id)}
+      <p>User: {user.name}</p>
+    {/each}
+  {/await}
+</div>
