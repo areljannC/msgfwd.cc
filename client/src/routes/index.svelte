@@ -1,8 +1,12 @@
 <script>
-  const getData = async () =>
-    await fetch('https://jsonplaceholder.typicode.com/users')
-      .then(res => res.json())
-      .then(data => data)
+  const getData = async () => {
+    if (process.browser) {
+      return await fetch('https://jsonplaceholder.typicode.com/users')
+        .then(res => res.json())
+        .then(data => data)
+        .catch(err => console.log(err))
+    }
+  }
 </script>
 
 <style scoped>
