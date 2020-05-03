@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/handlers"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"server/api"
+
+	"github.com/gorilla/handlers"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -23,5 +24,11 @@ func main() {
 	api.SetupRouterHandlers(router)
 
 	// Bind to a port and pass our router in.
-	log.Fatal(http.ListenAndServe(":8000", handlers.CORS()(router)))
+	log.Fatal(http.ListenAndServe(
+		":8000",
+		handlers.CORS(
+			handlers.AllowedOrigins([]string{"*"}),
+			handlers.AllowedMethods([]string{"GET", "POST"}),
+			handlers.AllowCredentials(),
+			handlers.AllowedHeaders([]string{"Content-Type", "Bearer"}))(router)))
 }
