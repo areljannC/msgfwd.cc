@@ -1,11 +1,29 @@
 <script>
-  const getLatestMessage = async () =>
-    process.browser
-      ? await fetch('http://localhost:8000/api/message')
-          .then(res => res.json())
-          .then(data => data)
-          .catch(err => console.log(err))
-      : false
+  import { onMount } from 'svelte'
+  import Form from '../components/Form.svelte'
+
+  let isLoading = false
+  let latestMessage = {}
+
+  const getLatestMessage = async () => {
+    if (process.browser) {
+      isLoading = true
+      await fetch('http://localhost:8000/api/message')
+        .then(res => res.json())
+        .then(data => {
+          latestMessage = data
+          isLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          isLoading = false
+        })
+    }
+  }
+
+  onMount(async () => {
+    getLatestMessage()
+  })
 </script>
 
 <style scoped>
@@ -24,13 +42,13 @@
 </svelte:head>
 
 <div class="container">
-  {#await getLatestMessage()}
+  {#if isLoading}
     <p>Getting latest message...</p>
-  {:then {name, location, message}}
-    <p>Name: {name}</p>
-    <p>Location: {location}</p>
-    <p>Message: {message}</p>
-  {:catch error}
-    <p>Oops... something happened with our server.</p>
-  {/await}
+  {:else}
+    <p>Name: {latestMessage.name}</p>
+    <p>Location: {latestMessage.location}</p>
+    <p>Message: {latestMessage.message}</p>
+  {/if}
+
+  <Form on:submit={() => getLatestMessage()} />
 </div>
